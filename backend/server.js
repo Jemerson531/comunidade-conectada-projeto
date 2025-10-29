@@ -2,49 +2,52 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
-const authRoutes = require('./routes/auth');
-const servicesRoutes = require('./routes/services');
-
 const app = express();
 
 // Middlewares
 app.use(cors());
 app.use(express.json());
-app.use(express.static('../frontend'));
 
-// Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/services', servicesRoutes);
+// Log de todas as requisições
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
+  next();
+});
 
-// Health check
-app.get('/api/health', (req, res) => {
+// Rotas
+app.use('/api', require('./routes/health'));
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/services', require('./routes/services'));
+app.use('/api/users', require('./routes/users'));
+
+// Rota raiz
+app.get('/', (req, res) => {
   res.json({ 
-    status: 'OK', 
-    message: 'Comunidade Conectada API está funcionando!',
-    timestamp: new Date().toISOString()
+    message: 'Comunidade Conectada API',
+    status: 'online',
+    environment: process.env.NODE_ENV || 'development'
   });
 });
 
-// Rota para frontend
-app.get('/', (req, res) => {
-  res.sendFile('index.html', { root: '../frontend' });
-});
-
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ error: 'Algo deu errado!' });
-});
-
-// 404 handler
+// Rota de fallback
 app.use('*', (req, res) => {
   res.status(404).json({ error: 'Rota não encontrada' });
 });
 
-const PORT = process.env.PORT || 3000;
+// Tratamento global de erros
+app.use((error, req, res, next) => {
+  console.error('❌ Erro global:', error);
+  res.status(500).json({ 
+    error: 'Erro interno do servidor',
+    message: error.message
+  });
+});
+
+const PORT = process.env.PORT || 3001;
 
 app.listen(PORT, () => {
   console.log(`🚀 Servidor rodando na porta ${PORT}`);
-  console.log(`📱 Ambiente: ${process.env.NODE_ENV}`);
-  console.log(`🌐 Acesse: http://localhost:${PORT}`);
+  console.log(`🌍 Ambiente: ${process.env.NODE_ENV || 'development'}`);
 });
+
+module.exports = app;
