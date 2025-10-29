@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro - Comunidade Conectada</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/accessibility.css">
+</head>
+<body>
+    <header role="banner">
+        <nav class="navbar" role="navigation" aria-label="Navegação principal">
+            <div class="nav-container">
+                <h1 class="logo">
+                    <a href="index.html" aria-label="Comunidade Conectada">
+                        🌐 Comunidade Conectada
+                    </a>
+                </h1>
+                <ul class="nav-menu">
+                    <li><a href="index.html">Início</a></li>
+                    <li><a href="servicos.html">Serviços</a></li>
+                    <li><a href="login.html">Login</a></li>
+                    <li><a href="cadastro.html" aria-current="page">Cadastrar</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main role="main">
+        <section class="auth-section" aria-labelledby="cadastro-title">
+            <div class="auth-container">
+                <div class="auth-card">
+                    <h1 id="cadastro-title">Criar sua conta</h1>
+                    <p class="auth-subtitle">Junte-se à nossa comunidade</p>
+
+                    <form id="cadastroForm" class="auth-form">
+                        <div class="form-group">
+                            <label for="nome">Nome completo *</label>
+                            <input 
+                                type="text" 
+                                id="nome" 
+                                name="nome" 
+                                required 
+                                aria-required="true"
+                                aria-describedby="nome-help"
+                            >
+                            <small id="nome-help" class="help-text">Seu nome completo como deseja ser chamado</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">E-mail *</label>
+                            <input 
+                                type="email" 
+                                id="email" 
+                                name="email" 
+                                required 
+                                aria-required="true"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="senha">Senha *</label>
+                            <input 
+                                type="password" 
+                                id="senha" 
+                                name="senha" 
+                                required 
+                                aria-required="true"
+                                minlength="6"
+                                aria-describedby="senha-help"
+                            >
+                            <small id="senha-help" class="help-text">Mínimo de 6 caracteres</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirmarSenha">Confirmar senha *</label>
+                            <input 
+                                type="password" 
+                                id="confirmarSenha" 
+                                name="confirmarSenha" 
+                                required 
+                                aria-required="true"
+                            >
+                        </div>
+
+                        <fieldset class="form-group">
+                            <legend>Tipo de conta *</legend>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input 
+                                        type="radio" 
+                                        name="tipo" 
+                                        value="morador" 
+                                        checked
+                                        aria-checked="true"
+                                    >
+                                    <span class="radio-custom"></span>
+                                    Morador
+                                </label>
+                                <label class="radio-label">
+                                    <input 
+                                        type="radio" 
+                                        name="tipo" 
+                                        value="prestador"
+                                        aria-checked="false"
+                                    >
+                                    <span class="radio-custom"></span>
+                                    Prestador de Serviços
+                                </label>
+                            </div>
+                        </fieldset>
+
+                        <div class="form-group">
+                            <label for="cep">CEP</label>
+                            <div class="input-with-button">
+                                <input 
+                                    type="text" 
+                                    id="cep" 
+                                    name="cep" 
+                                    placeholder="00000-000"
+                                    maxlength="9"
+                                >
+                                <button type="button" id="buscarCep" class="btn btn-outline">
+                                    Buscar
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="endereco">Endereço</label>
+                            <input 
+                                type="text" 
+                                id="endereco" 
+                                name="endereco" 
+                                readonly
+                                aria-describedby="endereco-help"
+                            >
+                            <small id="endereco-help" class="help-text">Preenchido automaticamente pelo CEP</small>
+                        </div>
+
+                        <div class="form-group checkbox-group">
+                            <label class="checkbox-label">
+                                <input 
+                                    type="checkbox" 
+                                    id="termos" 
+                                    name="termos" 
+                                    required
+                                    aria-required="true"
+                                >
+                                <span class="checkbox-custom"></span>
+                                Concordo com os <a href="#" target="_blank">Termos de Uso</a> e 
+                                <a href="#" target="_blank">Política de Privacidade</a> *
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-full" id="submitBtn">
+                            Criar conta
+                        </button>
+
+                        <div class="auth-links">
+                            <p>
+                                Já tem uma conta? <a href="login.html">Faça login aqui</a>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer role="contentinfo">
+        <div class="container">
+            <p>&copy; 2025 Comunidade Conectada. Projeto Integrador II - UNIVESP.</p>
+        </div>
+    </footer>
+
+    <script src="js/utils.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    
+    <script>
+        document.getElementById('cadastroForm').addEventListener('submit', handleRegister);
+        document.getElementById('buscarCep').addEventListener('click', buscarCEP);
+        
+        // Formatação automática do CEP
+        document.getElementById('cep').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 5) {
+                value = value.substring(0,5) + '-' + value.substring(5,8);
+            }
+            e.target.value = value;
+        });
+    </script>
+</body>
+</html>
